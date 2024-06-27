@@ -21,18 +21,38 @@ router.get('/new', (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        // Look up the user from req.session
         const currentUser = await User.findById(req.session.user._id);
-        // Render index.ejs, passing in all of the current user's 
-        // applications as data in the context object. 
-        res.render('applications/index.ejs', {
-          applications: currentUser.applications,
-        });
+        currentUser.applications.push(req.body);
+        await currentUser.save();
+        res.redirect(`/users/${currentUser._id}/applications`);
       } catch (error) {
-        // If any errors, log them and redirect back home
         console.log(error)
         res.redirect('/')
       }
   });
 
+  router.get('/:applicationId', async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        const application = currentUser.applications.id(req.params.applicationId)
+        res.render('applications/show.ejs', {
+            application: application
+        })   
+    } catch (err) {
+        console.log(err)
+        res.redirect('/')
+    }
+  });
+
+  router.delete('/:applactionId', async (req, res) => {
+    try {
+        const currentUser = await User.findById(req.session.user._id);
+        currentUser.applications.id(req.params.applactionId).deleteOne();
+        await currentUser.save() 
+        res.redirect(`/users/${currentUser._id}/applications`)
+    } catch (err) {
+        console.log(err)
+        res.redirect('/')
+    }
+  })
 module.exports = router
