@@ -40,10 +40,7 @@ app.get('/', (req, res) => {
   } else {
     res.render('index.ejs')
   }
-  // res.render('index.ejs', {
-  //   user: req.session.user,
-  // });
-});
+})
 
 app.use('/auth', authController);
 app.use(isSignedIn)
